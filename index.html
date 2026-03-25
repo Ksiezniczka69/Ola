@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<title>Dla Ciebie</title>
+
+<style>
+body {
+    background: #0f0f0f;
+    color: #f1f1f1;
+    font-family: Arial;
+    text-align: center;
+    padding: 40px;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+}
+h1 {
+    color: #ff4d4d;
+}
+.timer {
+    font-size: 20px;
+    margin-bottom: 30px;
+    color: #aaa;
+}
+.section {
+    margin-top: 40px;
+    line-height: 1.6;
+    opacity: 0;
+    animation: fadeIn 1.5s forwards;
+}
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+</style>
+
+</head>
+<body>
+
+<div class="container">
+
+<h1>Ola...</h1>
+
+<div class="timer" id="timer"></div>
+
+<div class="section" style="animation-delay:1s;">
+Wiem, że Cię zawiodłem.
+</div>
+
+<div class="section" style="animation-delay:2s;">
+Okłamywałem Cię.<br>
+Obiecywałem rzeczy, których nie robiłem.<br>
+Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
+Byłem zazdrosny i dokładałem Ci problemów.
+</div>
+
+<div class="section" style="animation-delay:3s;">
+A mimo to byłaś przy mnie.<br>
+Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
+I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
+</div>
+
+<div class="section" style="animation-delay:4s;">
+Jesteś dla mnie naprawdę ważna.<br>
+Jedną z najważniejszych osób w moim życiu.
+</div>
+
+<div class="section" style="animation-delay:5s;">
+Nie chcę już rzucać pustych obietnic.<br>
+Chcę się zmienić i pokazać to działaniem.
+</div>
+
+<div class="section" style="animation-delay:6s;">
+Nie oczekuję, że mi wybaczysz.<br>
+Po prostu chciałem, żebyś to wiedziała.
+</div>
+
+</div>
+
+<script>
+// DATA POCZĄTKU RELACJI — TU ZMIEŃ
+const startDate = new Date("2024-01-01"); // <-- ZMIEŃ NA WASZĄ DATĘ
+
+function updateTimer() {
+    const now = new Date();
+    const diff = now - startDate;
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const months = Math.floor(days / 30);
+
+    document.getElementById("timer").innerText =
+        "Jesteśmy razem " + months + " miesięcy i " + days + " dni";
+}
+
+updateTimer();
+</script>
+
+</body>
+</html>
