@@ -10,37 +10,29 @@ body {
     background: #0f0f0f;
     color: #f1f1f1;
     font-family: Arial, sans-serif;
-    text-align: center;
-    overflow: hidden; /* żeby serca nie przewijały się */
-    height: 100vh;
+    overflow: hidden;
 }
-.container {
-    max-width: 700px;
-    margin: 0 auto;
-    padding-top: 20vh;
+.center-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
 }
 h1 {
-    color: #ff4d4d;
     font-size: 48px;
+    color: #ff4d4d;
     margin-bottom: 30px;
 }
 .timer {
-    font-size: 36px;
+    font-size: 42px;
     margin-bottom: 20px;
 }
 .arrow {
     font-size: 48px;
     cursor: pointer;
     display: inline-block;
-}
-.section {
-    margin-top: 40px;
-    line-height: 1.6;
-    opacity: 0;
-    transition: opacity 1s;
-}
-.section.show {
-    opacity: 1;
+    margin-top: 20px;
 }
 .heart {
     position: absolute;
@@ -52,21 +44,32 @@ h1 {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
 }
+.section {
+    margin-top: 40px;
+    line-height: 1.6;
+    opacity: 0;
+    transition: opacity 1s;
+}
+.section.show {
+    opacity: 1;
+}
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="center-container" id="counter-container">
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
     <div class="arrow" onclick="nextStep()">➡️</div>
+</div>
 
+<div class="center-container" id="section-container" style="display:none;">
     <div class="section" id="section1">
-        Wiem, że Cię zawiodłem.
+        Wiem, że Cię skrzywdziłem.
     </div>
     <div class="section" id="section2">
         Okłamywałem Cię.<br>
-        Obiecywałem rzeczy, których nie robiłem.<br>
+        Obiecywałem rzeczy, których nie zrobiłem.<br>
         Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
         Byłem zazdrosny i dokładałem Ci problemów.
     </div>
@@ -87,47 +90,34 @@ h1 {
         Nie oczekuję, że mi wybaczysz.<br>
         Po prostu chciałem, żebyś to wiedziała.
     </div>
+    <div class="arrow" onclick="nextSection()">➡️</div>
 </div>
 
 <script>
 // Data początku relacji
 const startDate = new Date("2024-11-29T00:00:00");
-
-// Krok licznika
 let step = 0;
 
-// Liczymy dokładnie lata, miesiące i dni
-function calculateDiff() {
+// Liczymy lata, miesiące i dni w sumie
+function calculateTotal() {
     const now = new Date();
-
-    let years = now.getFullYear() - startDate.getFullYear();
-    let months = now.getMonth() - startDate.getMonth();
-    let days = now.getDate() - startDate.getDate();
-
-    if (days < 0) {
-        months--;
-        const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
-        days += prevMonth.getDate();
-    }
-    if (months < 0) {
-        years--;
-        months += 12;
-    }
-
-    return {years, months, days};
+    const diffMs = now - startDate;
+    const diffDays = Math.floor(diffMs / (1000*60*60*24));
+    const diffMonths = +(diffDays / 30.4375).toFixed(1); // średnia liczba dni w miesiącu
+    const diffYears = +(diffMonths / 12).toFixed(2);
+    return {years: diffYears, months: diffMonths, days: diffDays};
 }
 
-// Aktualizujemy licznik
 function updateTimer() {
-    const diff = calculateDiff();
+    const total = calculateTotal();
     const timer = document.getElementById("timer");
 
-    if (step === 0) timer.innerText = `Jesteśmy razem ${diff.years} lat`;
-    else if (step === 1) timer.innerText = `Jesteśmy razem ${diff.months} miesięcy`;
-    else if (step === 2) timer.innerText = `Jesteśmy razem ${diff.days} dni`;
+    if (step === 0) timer.innerText = `Jesteśmy razem ${total.years} lat`;
+    else if (step === 1) timer.innerText = `Jesteśmy razem ${total.months} miesięcy`;
+    else if (step === 2) timer.innerText = `Jesteśmy razem ${total.days} dni`;
 }
 
-// Tworzymy serduszka na całym ekranie
+// Funkcja serduszek
 function spawnHearts() {
     for (let i = 0; i < 15; i++) {
         const heart = document.createElement("div");
@@ -140,19 +130,30 @@ function spawnHearts() {
     }
 }
 
-// Klikamy strzałkę
+// Klik strzałki przy liczniku
 function nextStep() {
     step++;
     if (step > 2) {
-        // Pokaż wszystkie sekcje
-        for (let i = 1; i <= 6; i++) {
-            document.getElementById("section"+i).classList.add("show");
-        }
-        document.querySelector(".arrow").style.display = "none";
+        // koniec licznika, pokaż sekcje
+        document.getElementById("counter-container").style.display = "none";
+        document.getElementById("section-container").style.display = "block";
+        showSection(1);
     } else {
         updateTimer();
         spawnHearts();
     }
+}
+
+// Obsługa sekcji przeprosin
+let sectionStep = 1;
+function showSection(num) {
+    document.getElementById("section"+num).classList.add("show");
+}
+
+function nextSection() {
+    sectionStep++;
+    if(sectionStep <= 6) showSection(sectionStep);
+    if(sectionStep === 6) document.querySelector("#section-container .arrow").style.display = "none";
 }
 
 // Start
