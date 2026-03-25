@@ -2,95 +2,106 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>Dla Ciebie</title>
-
+<title>Dla Ciebie, Ola</title>
 <style>
 body {
+    margin: 0;
+    padding: 0;
     background: #0f0f0f;
     color: #f1f1f1;
-    font-family: Arial;
+    font-family: Arial, sans-serif;
     text-align: center;
-    padding: 40px;
+    overflow-x: hidden;
 }
 .container {
     max-width: 700px;
-    margin: auto;
+    margin: 0 auto;
+    padding-top: 150px;
 }
 h1 {
     color: #ff4d4d;
+    font-size: 48px;
+    margin-bottom: 30px;
 }
 .timer {
-    font-size: 24px;
+    font-size: 36px;
     margin-bottom: 20px;
 }
 .arrow {
-    font-size: 30px;
+    font-size: 48px;
     cursor: pointer;
-    margin-bottom: 40px;
     display: inline-block;
+}
+.hearts {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+.heart {
+    position: absolute;
+    font-size: 24px;
+    animation: floatUp 1.5s ease-out forwards;
+}
+@keyframes floatUp {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
 }
 .section {
     margin-top: 40px;
     line-height: 1.6;
     opacity: 0;
-    animation: fadeIn 1.5s forwards;
+    transition: opacity 1s;
 }
-@keyframes fadeIn {
-    to { opacity: 1; }
+.section.show {
+    opacity: 1;
 }
 </style>
-
 </head>
 <body>
 
 <div class="container">
+    <h1>Ola...</h1>
+    <div class="timer" id="timer"></div>
+    <div class="arrow" onclick="nextStep()">➡️</div>
 
-<h1>Ola...</h1>
-
-<div class="timer" id="timer"></div>
-<div class="arrow" onclick="nextStep()">➡️</div>
-
-<div class="section" style="animation-delay:1s;">
-Wiem, że Cię zawiodłem.
+    <div class="section" id="section1">
+        Wiem, że Cię zawiodłem.
+    </div>
+    <div class="section" id="section2">
+        Okłamywałem Cię.<br>
+        Obiecywałem rzeczy, których nie robiłem.<br>
+        Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
+        Byłem zazdrosny i dokładałem Ci problemów.
+    </div>
+    <div class="section" id="section3">
+        A mimo to byłaś przy mnie.<br>
+        Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
+        I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
+    </div>
+    <div class="section" id="section4">
+        Jesteś dla mnie naprawdę ważna.<br>
+        Jedną z najważniejszych osób w moim życiu.
+    </div>
+    <div class="section" id="section5">
+        Nie chcę już rzucać pustych obietnic.<br>
+        Chcę się zmienić i pokazać to działaniem.
+    </div>
+    <div class="section" id="section6">
+        Nie oczekuję, że mi wybaczysz.<br>
+        Po prostu chciałem, żebyś to wiedziała.
+    </div>
 </div>
 
-<div class="section" style="animation-delay:2s;">
-Okłamywałem Cię.<br>
-Obiecywałem rzeczy, których nie robiłem.<br>
-Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
-Byłem zazdrosny i dokładałem Ci problemów.
-</div>
-
-<div class="section" style="animation-delay:3s;">
-A mimo to byłaś przy mnie.<br>
-Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
-I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
-</div>
-
-<div class="section" style="animation-delay:4s;">
-Jesteś dla mnie naprawdę ważna.<br>
-Jedną z najważniejszych osób w moim życiu.
-</div>
-
-<div class="section" style="animation-delay:5s;">
-Nie chcę już rzucać pustych obietnic.<br>
-Chcę się zmienić i pokazać to działaniem.
-</div>
-
-<div class="section" style="animation-delay:6s;">
-Nie oczekuję, że mi wybaczysz.<br>
-Po prostu chciałem, żebyś to wiedziała.
-</div>
-
-</div>
+<div class="hearts" id="hearts"></div>
 
 <script>
 const startDate = new Date("2024-11-29");
 let step = 0;
 
-function updateTimer() {
+function calculateDiff() {
     const now = new Date();
-
     let years = now.getFullYear() - startDate.getFullYear();
     let months = now.getMonth() - startDate.getMonth();
     let days = now.getDate() - startDate.getDate();
@@ -100,27 +111,47 @@ function updateTimer() {
         const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
         days += prevMonth.getDate();
     }
-
     if (months < 0) {
         years--;
         months += 12;
     }
 
+    return {years, months, days};
+}
+
+function updateTimer() {
+    const diff = calculateDiff();
     const timer = document.getElementById("timer");
 
-    if (step === 0) {
-        timer.innerText = "Jesteśmy razem " + years + " lat";
-    } else if (step === 1) {
-        timer.innerText = "Jesteśmy razem " + months + " miesięcy";
-    } else {
-        timer.innerText = "Jesteśmy razem " + days + " dni";
+    if (step === 0) timer.innerText = `Jesteśmy razem ${diff.years} lat`;
+    else if (step === 1) timer.innerText = `Jesteśmy razem ${diff.months} miesięcy`;
+    else if (step === 2) timer.innerText = `Jesteśmy razem ${diff.days} dni`;
+}
+
+function spawnHearts() {
+    const heartsContainer = document.getElementById("hearts");
+    for (let i = 0; i < 10; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * 100 + "vw";
+        heart.innerText = "❤️";
+        heartsContainer.appendChild(heart);
+        setTimeout(() => heartsContainer.removeChild(heart), 1500);
     }
 }
 
 function nextStep() {
     step++;
-    if (step > 2) step = 0;
-    updateTimer();
+    if (step > 2) {
+        // pokaż sekcje z przeprosinami
+        for (let i = 1; i <= 6; i++) {
+            document.getElementById("section"+i).classList.add("show");
+        }
+        document.querySelector(".arrow").style.display = "none"; // ukryj strzałkę
+    } else {
+        updateTimer();
+        spawnHearts();
+    }
 }
 
 updateTimer();
