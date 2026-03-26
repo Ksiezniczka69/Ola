@@ -9,205 +9,246 @@ body {
     padding: 0;
     background: #0f0f0f;
     color: #f1f1f1;
-    font-family: 'Arial Black', Arial, sans-serif;
+    font-family: Arial, sans-serif;
     overflow: hidden;
+    text-align: center;
 }
 
-/* Kontenery z efektem slow zoom */
 .center-container {
-    position: fixed;
+    position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%) scale(0.9);
-    text-align: center;
+    transform: translate(-50%, -50%);
     max-width: 900px;
-    transition: transform 1s ease, opacity 1s ease;
-    opacity: 0;
-    pointer-events: none; /* blokujemy kliknięcia w ukrytym stanie */
-    z-index: 10;
-}
-.center-container.show {
-    transform: translate(-50%, -50%) scale(1);
-    opacity: 1;
-    pointer-events: auto; /* odblokowujemy kliknięcia po pokazaniu */
 }
 
 h1 {
-    font-size: 70px;
+    font-size: 60px;
     color: #ff4d4d;
     margin-bottom: 40px;
 }
 
-.timer {
-    font-size: 45px;
+.timer, .event {
+    font-size: 42px;
+    line-height: 1.5;
     margin-bottom: 30px;
 }
 
+.timer span {
+    color: #ff4d4d;
+    font-weight: bold;
+}
+
 .arrow {
-    font-size: 60px;
+    font-size: 48px;
     cursor: pointer;
     display: inline-block;
-    margin-top: 30px;
+    margin-top: 20px;
 }
 
 .heart {
     position: absolute;
-    font-size: 40px;
-    animation: floatUp 8s linear forwards;
+    font-size: 30px;
+    animation: floatUp 2s ease-out forwards;
     pointer-events: none;
 }
+
 @keyframes floatUp {
-    0% { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: translate(calc(-50px + 100px * var(--randX)), -1200px) scale(1.5); opacity: 0; }
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
 }
 
-/* Wydarzenia */
-.event-header {
-    font-size: 52px;
-    color: #ff4d4d;
-    margin-bottom: 20px;
-}
-.event-body {
-    font-size: 30px;
-    color: #f1f1f1;
-    line-height: 1.6;
-}
-
-/* Sekcje przeprosin */
 .section {
     margin-top: 40px;
     line-height: 1.6;
     opacity: 0;
-    transform: scale(0.9);
-    transition: opacity 0.6s, transform 0.6s;
+    transition: opacity 1s;
+    font-size: 36px;
 }
+
 .section.show {
     opacity: 1;
-    transform: scale(1);
+}
+
+.event-red { color: #ff4d4d; font-size: 40px; font-weight: bold; }
+.event-white { color: #ffffff; font-size: 32px; margin-top: 10px; }
+
+#slideshow {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    animation: slowZoom 10s linear infinite;
+}
+
+@keyframes slowZoom {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
 }
 </style>
 </head>
 <body>
 
+<!-- Muzyka -->
 <audio id="background-music" src="muzyka.mp3.mp3" loop></audio>
 
 <!-- Licznik -->
-<div class="center-container show" id="counter-container">
+<div class="center-container" id="counter-container">
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
-    <div class="arrow" onclick="nextStep()">➡️</div>
+    <div class="arrow" onclick="playMusic(); nextStep()">➡️</div>
 </div>
 
-<!-- Wydarzenia -->
-<div class="center-container" id="event-container">
-    <div id="event-display"></div>
-    <div class="arrow" id="event-arrow" onclick="nextEvent()">➡️</div>
+<!-- Wydarzenia chronologiczne -->
+<div class="center-container" id="event-container" style="display:none;">
+    <div class="event section" id="event1">
+        <div class="event-red">Pierwsza wiadomość<br>17.07.2024</div>
+        <div class="event-white">o treści "."</div>
+    </div>
+    <div class="event section" id="event2">
+        <div class="event-red">Wejście w związek<br>29.11.2024</div>
+        <div class="event-white">
+A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim, gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
+        </div>
+    </div>
+    <div class="event section" id="event3">
+        <div class="event-red">Pierwsze spotkanie<br>21.06.2025</div>
+    </div>
+    <div class="arrow" onclick="nextEvent()">➡️</div>
 </div>
 
 <!-- Sekcje przeprosin -->
-<div class="center-container" id="section-container">
+<div class="center-container" id="section-container" style="display:none;">
     <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
-    <div class="section" id="section2">Okłamywałem Cię.<br>Obiecywałem rzeczy, których nie zrobiłem.<br>Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>Byłem zazdrosny i dokładałem Ci problemów.</div>
-    <div class="section" id="section3">A mimo to byłaś przy mnie.<br>Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>I wiem, że to przeze mnie zaczęłaś się źle czuć.</div>
-    <div class="section" id="section4">Jesteś dla mnie naprawdę ważna.<br>Najważniejszą i najwspanialszą osobą w moim życiu.</div>
-    <div class="section" id="section5">Nie chcę już rzucać pustych obietnic.<br>Chcę się zmienić i pokazać to działaniem.</div>
-    <div class="section" id="section6">Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>Po prostu chciałem, żebyś to wiedziała.<br>I żebyś jeszcze mnie nie skreśliła.</div>
-    <div class="arrow" id="section-arrow" onclick="nextSection()">➡️</div>
+    <div class="section" id="section2">
+Okłamywałem Cię.<br>
+Obiecywałem rzeczy, których nie zrobiłem.<br>
+Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
+Byłem zazdrosny i dokładałem Ci problemów.
+    </div>
+    <div class="section" id="section3">
+A mimo to byłaś przy mnie.<br>
+Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
+I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
+    </div>
+    <div class="section" id="section4">
+Jesteś dla mnie naprawdę ważna.<br>
+Najważniejszą i najwspanialszą osobą w moim życiu.
+    </div>
+    <div class="section" id="section5">
+Nie chcę już rzucać pustych obietnic.<br>
+Chcę się zmienić i pokazać to działaniem.
+    </div>
+    <div class="section" id="section6">
+Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>
+Po prostu chciałem, żebyś to wiedziała.<br>
+I żebyś jeszcze mnie nie skreśliła.
+    </div>
+    <div class="arrow" onclick="nextSection()">➡️</div>
 </div>
 
+<!-- Slideshow -->
+<img id="slideshow" src="img/1.jpg">
+
 <script>
-// Licznik
+// --------------------- LICZNIK ---------------------
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
+
 function calculateTotal() {
     const now = new Date();
-    const diffDays = Math.floor((now - startDate)/(1000*60*60*24));
+    const diffMs = now - startDate;
+    const diffDays = Math.floor(diffMs / (1000*60*60*24));
     const diffMonths = +(diffDays / 30.4375).toFixed(1);
     const diffYears = +(diffMonths / 12).toFixed(2);
     return {years: diffYears, months: diffMonths, days: diffDays};
 }
+
 function updateTimer() {
-    const t = calculateTotal();
+    const total = calculateTotal();
     const timer = document.getElementById("timer");
-    if(step===0) timer.innerText = `Jesteśmy razem ${t.years} lat`;
-    else if(step===1) timer.innerText = `Jesteśmy razem ${t.months} miesięcy`;
-    else if(step===2) timer.innerText = `Jesteśmy razem ${t.days} dni`;
+    if (step === 0) timer.innerHTML = `Jesteśmy razem <span>${total.years}</span> lat`;
+    else if (step === 1) timer.innerHTML = `Jesteśmy razem <span>${total.months}</span> miesięcy`;
+    else if (step === 2) timer.innerHTML = `Jesteśmy razem <span>${total.days}</span> dni`;
 }
 
-// Serduszka
-function spawnHeart(x=null,y=null){
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.style.setProperty('--randX', Math.random());
-    h.innerText="❤️";
-    h.style.left = x!==null?x+"px":Math.random()*window.innerWidth+"px";
-    h.style.top = y!==null?y+"px":Math.random()*window.innerHeight+"px";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),8000);
+function spawnHearts() {
+    for (let i = 0; i < 20; i++) {
+        const heart = document.createElement("div");
+        heart.className = "heart";
+        heart.innerText = "❤️";
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.top = Math.random() * window.innerHeight + "px";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 2500);
+    }
 }
-setInterval(()=>spawnHeart(), 500);
 
-function spawnHearts(num=15){for(let i=0;i<num;i++){spawnHeart();}}
-
-// NEXT STEP Licznik
-function nextStep(){
+function nextStep() {
     step++;
-    if(step>2){
-        document.getElementById("counter-container").classList.remove("show");
-        setTimeout(()=>{
-            document.getElementById("counter-container").style.display="none";
-            const ec = document.getElementById("event-container");
-            ec.style.display="block";
-            ec.classList.add("show");
-            showEvent(0);
-        },600);
+    if (step > 2) {
+        document.getElementById("counter-container").style.display = "none";
+        document.getElementById("event-container").style.display = "block";
+        showEvent(1);
     } else {
         updateTimer();
         spawnHearts();
     }
 }
 
-// Wydarzenia
-const events = [
-    {header: "Pierwsza wiadomość 17.07.2024", body: 'o treści "."'},
-    {header: "Wejście w związek 29.11.2024", body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim, gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`},
-    {header: "Pierwsze spotkanie 21.06.2025", body: ""}
-];
-let eventIndex = 0;
-const eventDisplay = document.getElementById("event-display");
-function showEvent(i){
-    eventDisplay.innerHTML = `<div class="event-header">${events[i].header}</div>
-                              <div class="event-body">${events[i].body}</div>`;
-    spawnHearts();
+// --------------------- WYDARZENIA ---------------------
+let eventStep = 1;
+function showEvent(num) {
+    document.querySelectorAll("#event-container .section").forEach(e => e.style.display="none");
+    document.getElementById("event"+num).style.display="block";
 }
-function nextEvent(){
-    eventIndex++;
-    if(eventIndex < events.length){
-        showEvent(eventIndex);
-    } else {
-        document.getElementById("event-container").classList.remove("show");
-        setTimeout(()=>{
-            document.getElementById("event-container").style.display="none";
-            const sc=document.getElementById("section-container");
-            sc.style.display="block";
-            sc.classList.add("show");
-            document.getElementById("section1").classList.add("show");
-            document.getElementById("section-arrow").style.display="inline-block";
-            spawnHearts();
-        },600);
+
+function nextEvent() {
+    eventStep++;
+    if(eventStep <= 3) {
+        showEvent(eventStep);
+        spawnHearts();
+    }
+    if(eventStep > 3) {
+        document.getElementById("event-container").style.display="none";
+        const sectionContainer = document.getElementById("section-container");
+        sectionContainer.style.display = "block";
+        document.getElementById("section1").classList.add("show");
+        sectionContainer.querySelector(".arrow").style.display="inline-block";
+        spawnHearts();
     }
 }
 
-// Sekcje przeprosin
-let sectionStep=1;
-function showSection(n){document.getElementById("section"+n).classList.add("show");}
-function nextSection(){
-    sectionStep++;
-    if(sectionStep<=6) showSection(sectionStep);
-    if(sectionStep===6) document.getElementById("section-arrow").style.display="none";
+// --------------------- SEKCJE PRZEPROSIN ---------------------
+let sectionStep = 1;
+function showSection(num) {
+    document.getElementById("section"+num).classList.add("show");
 }
 
-// Start licznika
+function nextSection() {
+    sectionStep++;
+    if(sectionStep <= 6) showSection(sectionStep);
+    if(sectionStep === 6) document.querySelector("#section-container .arrow").style.display = "none";
+}
+
+// --------------------- SLIDESHOW ---------------------
+const images = ["img/1.jpg","img/2.jpg","img/3.jpg"];
+let imgIndex = 0;
+setInterval(() => {
+    imgIndex = (imgIndex + 1) % images.length;
+    const slide = document.getElementById("slideshow");
+    slide.src = images[imgIndex];
+}, 5000);
+
+// --------------------- MUZYKA ---------------------
+function playMusic() {
+    const music = document.getElementById('background-music');
+    music.play();
+}
+
+// --------------------- START ---------------------
 updateTimer();
 </script>
 
