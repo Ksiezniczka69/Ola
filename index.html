@@ -175,20 +175,25 @@ function showEvent(num) {
 function nextEvent() {
     if(eventStep < 3) {
         eventStep++;
-        spawnHearts();
         showEvent(eventStep);
+        spawnHearts();
     }
 
     if(eventStep === 3) {
-        // Po ostatnim wydarzeniu -> pokazujemy sekcje przeprosin od razu
+        // pokaż sekcje przeprosin od razu
         document.getElementById("event-container").style.display = "none";
         const sectionContainer = document.getElementById("section-container");
         sectionContainer.style.display = "block";
-        showSection(1);
 
-        // Strzałka przejścia do sekcji widoczna
+        // pokaż pierwszą sekcję natychmiast
+        document.getElementById("section1").classList.add("show");
+
+        // pokaż strzałkę sekcji od razu
         const arrow = sectionContainer.querySelector(".arrow");
-        if(arrow) arrow.style.display = "inline-block";
+        arrow.style.display = "inline-block";
+
+        // generuj serca
+        spawnHearts();
     }
 }
 
