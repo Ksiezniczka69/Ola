@@ -40,12 +40,12 @@ h1 {
 .heart {
     position: absolute;
     font-size: 40px;
-    animation: floatUp 3s linear forwards;
+    animation: floatUp 8s linear forwards;
     pointer-events: none;
 }
 @keyframes floatUp {
     0% { transform: translate(0,0) scale(1); opacity: 1; }
-    100% { transform: translate(calc(-50px + 100px * var(--rand)), -500px) scale(1.5); opacity: 0; }
+    100% { transform: translate(calc(-50px + 100px * var(--randX)), -1200px) scale(1.5); opacity: 0; }
 }
 .event-header {
     font-size: 52px;
@@ -118,18 +118,29 @@ function updateTimer() {
     else if(step===1) timer.innerText = `Jesteśmy razem ${t.months} miesięcy`;
     else if(step===2) timer.innerText = `Jesteśmy razem ${t.days} dni`;
 }
-function spawnHearts() {
-    for(let i=0;i<20;i++){
-        const h=document.createElement("div");
-        h.className="heart";
-        h.style.setProperty('--rand', Math.random());
-        h.innerText="❤️";
-        h.style.left=Math.random()*window.innerWidth+"px";
-        h.style.top=Math.random()*window.innerHeight+"px";
-        document.body.appendChild(h);
-        setTimeout(()=>h.remove(),3000);
+
+// Funkcja do serduszek
+function spawnHeart(x=null,y=null){
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.style.setProperty('--randX', Math.random());
+    h.innerText="❤️";
+    h.style.left = x!==null?x+"px":Math.random()*window.innerWidth+"px";
+    h.style.top = y!==null?y+"px":Math.random()*window.innerHeight+"px";
+    document.body.appendChild(h);
+    setTimeout(()=>h.remove(),8000);
+}
+
+// Ciągłe serduszka
+setInterval(()=>spawnHeart(), 500);
+
+// Kliknięcie strzałki - dodatkowe serduszka
+function spawnHearts(num=15){
+    for(let i=0;i<num;i++){
+        spawnHeart();
     }
 }
+
 function nextStep(){
     step++;
     if(step>2){
