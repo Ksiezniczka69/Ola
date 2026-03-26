@@ -13,7 +13,7 @@ body {
     overflow: hidden;
 }
 .center-container {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
@@ -50,7 +50,7 @@ h1 {
     margin-top: 40px;
     line-height: 1.6;
     opacity: 0;
-    transition: opacity 1s;
+    transition: opacity 0.5s;
 }
 .section.show {
     opacity: 1;
@@ -66,150 +66,92 @@ h1 {
     <div class="arrow" onclick="nextStep()">➡️</div>
 </div>
 
-<!-- Wydarzenia chronologiczne -->
+<!-- Wydarzenia -->
 <div class="center-container" id="event-container" style="display:none;">
-    <div class="event section" id="event1">
-        Pierwsza wiadomość<br>
-        17.07.2024<br>
-        o treści "."
-    </div>
-    <div class="event section" id="event2">
-        Wejście w związek<br>
-        29.11.2024<br>
-        A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim...<br>
-        Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania...<br>
-        A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
-    </div>
-    <div class="event section" id="event3">
-        Pierwsze spotkanie<br>
-        21.06.2025
-    </div>
-    <div class="arrow" onclick="nextEvent()">➡️</div>
+    <div class="event section" id="event1">Pierwsza wiadomość<br>17.07.2024<br>o treści "."</div>
+    <div class="event section" id="event2">Wejście w związek<br>29.11.2024<br>A więc Aleksandro...kocham Cię.</div>
+    <div class="event section" id="event3">Pierwsze spotkanie<br>21.06.2025</div>
+    <div class="arrow" id="event-arrow" onclick="nextEvent()">➡️</div>
 </div>
 
 <!-- Sekcje przeprosin -->
 <div class="center-container" id="section-container" style="display:none;">
-    <div class="section" id="section1">
-        Wiem, że Cię skrzywdziłem.
-    </div>
-    <div class="section" id="section2">
-        Okłamywałem Cię.<br>
-        Obiecywałem rzeczy, których nie zrobiłem.<br>
-        Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
-        Byłem zazdrosny i dokładałem Ci problemów.
-    </div>
-    <div class="section" id="section3">
-        A mimo to byłaś przy mnie.<br>
-        Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
-        I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
-    </div>
-    <div class="section" id="section4">
-        Jesteś dla mnie naprawdę ważna.<br>
-        Jedną z najważniejszych osób w moim życiu.
-    </div>
-    <div class="section" id="section5">
-        Nie chcę już rzucać pustych obietnic.<br>
-        Chcę się zmienić i pokazać to działaniem.
-    </div>
-    <div class="section" id="section6">
-        Nie oczekuję, że mi wybaczysz.<br>
-        Po prostu chciałem, żebyś to wiedziała.
-    </div>
-    <div class="arrow" onclick="nextSection()">➡️</div>
+    <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
+    <div class="section" id="section2">Okłamywałem Cię.<br>Obiecywałem rzeczy, których nie zrobiłem.<br>Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>Byłem zazdrosny i dokładałem Ci problemów.</div>
+    <div class="section" id="section3">A mimo to byłaś przy mnie.<br>Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>I wiem, że to przeze mnie zaczęłaś się źle czuć.</div>
+    <div class="section" id="section4">Jesteś dla mnie naprawdę ważna.<br>Jedną z najważniejszych osób w moim życiu.</div>
+    <div class="section" id="section5">Nie chcę już rzucać pustych obietnic.<br>Chcę się zmienić i pokazać to działaniem.</div>
+    <div class="section" id="section6">Nie oczekuję, że mi wybaczysz.<br>Po prostu chciałem, żebyś to wiedziała.</div>
+    <div class="arrow" id="section-arrow" onclick="nextSection()">➡️</div>
 </div>
 
 <script>
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
 
-// Liczymy lata, miesiące i dni
 function calculateTotal() {
     const now = new Date();
-    const diffMs = now - startDate;
-    const diffDays = Math.floor(diffMs / (1000*60*60*24));
+    const diffDays = Math.floor((now - startDate)/(1000*60*60*24));
     const diffMonths = +(diffDays / 30.4375).toFixed(1);
     const diffYears = +(diffMonths / 12).toFixed(2);
     return {years: diffYears, months: diffMonths, days: diffDays};
 }
 
 function updateTimer() {
-    const total = calculateTotal();
+    const t = calculateTotal();
     const timer = document.getElementById("timer");
-
-    if (step === 0) timer.innerText = `Jesteśmy razem ${total.years} lat`;
-    else if (step === 1) timer.innerText = `Jesteśmy razem ${total.months} miesięcy`;
-    else if (step === 2) timer.innerText = `Jesteśmy razem ${total.days} dni`;
+    if(step===0) timer.innerText = `Jesteśmy razem ${t.years} lat`;
+    else if(step===1) timer.innerText = `Jesteśmy razem ${t.months} miesięcy`;
+    else if(step===2) timer.innerText = `Jesteśmy razem ${t.days} dni`;
 }
 
 function spawnHearts() {
-    for (let i = 0; i < 20; i++) {
-        const heart = document.createElement("div");
-        heart.className = "heart";
-        heart.innerText = "❤️";
-        heart.style.left = Math.random() * window.innerWidth + "px";
-        heart.style.top = Math.random() * window.innerHeight + "px";
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 2500);
+    for(let i=0;i<20;i++){
+        const h=document.createElement("div");
+        h.className="heart";
+        h.innerText="❤️";
+        h.style.left=Math.random()*window.innerWidth+"px";
+        h.style.top=Math.random()*window.innerHeight+"px";
+        document.body.appendChild(h);
+        setTimeout(()=>h.remove(),2500);
     }
 }
 
-// Licznik - kliknięcie strzałki
-function nextStep() {
+function nextStep(){
     step++;
-    if (step > 2) {
-        document.getElementById("counter-container").style.display = "none";
-        document.getElementById("event-container").style.display = "block";
+    if(step>2){
+        document.getElementById("counter-container").style.display="none";
+        document.getElementById("event-container").style.display="block";
         showEvent(1);
-    } else {
+    }else{
         updateTimer();
         spawnHearts();
     }
 }
 
-// Wydarzenia chronologiczne
-let eventStep = 1;
-function showEvent(num) {
-    document.getElementById("event"+num).classList.add("show");
-}
-
-function nextEvent() {
-    if(eventStep < 3) {
-        eventStep++;
-        showEvent(eventStep);
-        spawnHearts();
-    }
-
-    if(eventStep === 3) {
-        // pokaż sekcje przeprosin od razu
-        document.getElementById("event-container").style.display = "none";
-        const sectionContainer = document.getElementById("section-container");
-        sectionContainer.style.display = "block";
-
-        // pokaż pierwszą sekcję natychmiast
+let eventStep=1;
+function showEvent(n){document.getElementById("event"+n).classList.add("show");}
+function nextEvent(){
+    if(eventStep<3){eventStep++; showEvent(eventStep); spawnHearts();}
+    else{
+        // pokazujemy sekcje przeprosin od razu
+        document.getElementById("event-container").style.display="none";
+        const sc=document.getElementById("section-container");
+        sc.style.display="block";
         document.getElementById("section1").classList.add("show");
-
-        // pokaż strzałkę sekcji od razu
-        const arrow = sectionContainer.querySelector(".arrow");
-        arrow.style.display = "inline-block";
-
-        // generuj serca
+        document.getElementById("section-arrow").style.display="inline-block";
         spawnHearts();
     }
 }
 
-// Sekcje przeprosin
-let sectionStep = 1;
-function showSection(num) {
-    document.getElementById("section"+num).classList.add("show");
-}
-
-function nextSection() {
+let sectionStep=1;
+function showSection(n){document.getElementById("section"+n).classList.add("show");}
+function nextSection(){
     sectionStep++;
-    if(sectionStep <= 6) showSection(sectionStep);
-    if(sectionStep === 6) document.querySelector("#section-container .arrow").style.display = "none";
+    if(sectionStep<=6) showSection(sectionStep);
+    if(sectionStep===6) document.getElementById("section-arrow").style.display="none";
 }
 
-// Start
 updateTimer();
 </script>
 
