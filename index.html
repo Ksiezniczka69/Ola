@@ -9,7 +9,7 @@ body {
     padding: 0;
     background: #0f0f0f;
     color: #f1f1f1;
-    font-family: Arial, sans-serif;
+    font-family: 'Arial Black', Arial, sans-serif;
     overflow: hidden;
 }
 .center-container {
@@ -18,68 +18,74 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    max-width: 800px;
+    max-width: 900px;
 }
 h1 {
-    font-size: 60px;
+    font-size: 70px;
     color: #ff4d4d;
     margin-bottom: 40px;
+    animation: fadeIn 1s;
 }
 .timer {
-    font-size: 42px;
+    font-size: 45px;
     margin-bottom: 30px;
+    animation: fadeIn 1s;
 }
 .arrow {
-    font-size: 48px;
+    font-size: 60px;
     cursor: pointer;
     display: inline-block;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 .heart {
     position: absolute;
-    font-size: 30px;
-    animation: floatUp 2s ease-out forwards;
+    font-size: 40px;
+    animation: floatUp 3s linear forwards;
     pointer-events: none;
 }
 @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
+    0% { transform: translate(0,0) scale(1); opacity: 1; }
+    100% { transform: translate(calc(-50px + 100px * var(--rand)), -500px) scale(1.5); opacity: 0; }
 }
 .event-header {
-    font-size: 48px;
+    font-size: 52px;
     color: #ff4d4d;
     margin-bottom: 20px;
+    animation: fadeScale 1s;
 }
 .event-body {
-    font-size: 28px;
+    font-size: 30px;
     color: #f1f1f1;
     line-height: 1.6;
+    animation: fadeScale 1s;
 }
 .section {
     margin-top: 40px;
     line-height: 1.6;
     opacity: 0;
-    transition: opacity 0.5s;
+    transform: scale(0.9);
+    transition: opacity 0.6s, transform 0.6s;
 }
 .section.show {
     opacity: 1;
+    transform: scale(1);
 }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+@keyframes fadeScale { 0%{opacity:0; transform:scale(0.8)} 100%{opacity:1; transform:scale(1)} }
 </style>
 </head>
 <body>
 
-<!-- Licznik na środku -->
+<!-- Licznik -->
 <div class="center-container" id="counter-container">
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
     <div class="arrow" onclick="nextStep()">➡️</div>
 </div>
 
-<!-- Wydarzenia chronologiczne -->
+<!-- Wydarzenia -->
 <div class="center-container" id="event-container" style="display:none;">
-    <div id="event-display">
-        <!-- Tutaj dynamicznie będą ładowane wiadomości -->
-    </div>
+    <div id="event-display"></div>
     <div class="arrow" id="event-arrow" onclick="nextEvent()">➡️</div>
 </div>
 
@@ -88,9 +94,9 @@ h1 {
     <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
     <div class="section" id="section2">Okłamywałem Cię.<br>Obiecywałem rzeczy, których nie zrobiłem.<br>Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>Byłem zazdrosny i dokładałem Ci problemów.</div>
     <div class="section" id="section3">A mimo to byłaś przy mnie.<br>Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>I wiem, że to przeze mnie zaczęłaś się źle czuć.</div>
-    <div class="section" id="section4">Jesteś dla mnie naprawdę ważna.<br>Jedną z najważniejszych osób w moim życiu.</div>
+    <div class="section" id="section4">Jesteś dla mnie naprawdę ważna.<br>Najważniejszą i najwspanialszą osobą w moim życiu.</div>
     <div class="section" id="section5">Nie chcę już rzucać pustych obietnic.<br>Chcę się zmienić i pokazać to działaniem.</div>
-    <div class="section" id="section6">Nie oczekuję, że mi wybaczysz.<br>Po prostu chciałem, żebyś to wiedziała.</div>
+    <div class="section" id="section6">Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>Po prostu chciałem, żebyś to wiedziała.<br>I żebyś jeszcze mnie nie skreśliła.</div>
     <div class="arrow" id="section-arrow" onclick="nextSection()">➡️</div>
 </div>
 
@@ -116,11 +122,12 @@ function spawnHearts() {
     for(let i=0;i<20;i++){
         const h=document.createElement("div");
         h.className="heart";
+        h.style.setProperty('--rand', Math.random());
         h.innerText="❤️";
         h.style.left=Math.random()*window.innerWidth+"px";
         h.style.top=Math.random()*window.innerHeight+"px";
         document.body.appendChild(h);
-        setTimeout(()=>h.remove(),2500);
+        setTimeout(()=>h.remove(),3000);
     }
 }
 function nextStep(){
@@ -135,20 +142,11 @@ function nextStep(){
     }
 }
 
-// Wydarzenia w tablicy
+// Wydarzenia
 const events = [
-    {
-        header: "Pierwsza wiadomość 17.07.2024",
-        body: 'o treści "."'
-    },
-    {
-        header: "Wejście w związek 29.11.2024",
-        body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`
-    },
-    {
-        header: "Pierwsze spotkanie 21.06.2025",
-        body: ""
-    }
+    {header: "Pierwsza wiadomość 17.07.2024", body: 'o treści "."'},
+    {header: "Wejście w związek 29.11.2024", body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`},
+    {header: "Pierwsze spotkanie 21.06.2025", body: ""}
 ];
 
 let eventIndex = 0;
@@ -183,7 +181,6 @@ function nextSection(){
     if(sectionStep===6) document.getElementById("section-arrow").style.display="none";
 }
 
-// Start
 updateTimer();
 </script>
 
