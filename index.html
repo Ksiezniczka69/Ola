@@ -12,6 +12,8 @@ body {
     font-family: 'Arial Black', Arial, sans-serif;
     overflow: hidden;
 }
+
+/* Kontenery z efektem slow zoom */
 .center-container {
     position: fixed;
     top: 50%;
@@ -21,26 +23,33 @@ body {
     max-width: 900px;
     transition: transform 1s ease, opacity 1s ease;
     opacity: 0;
+    pointer-events: none; /* blokujemy kliknięcia w ukrytym stanie */
+    z-index: 10;
 }
 .center-container.show {
     transform: translate(-50%, -50%) scale(1);
     opacity: 1;
+    pointer-events: auto; /* odblokowujemy kliknięcia po pokazaniu */
 }
+
 h1 {
     font-size: 70px;
     color: #ff4d4d;
     margin-bottom: 40px;
 }
+
 .timer {
     font-size: 45px;
     margin-bottom: 30px;
 }
+
 .arrow {
     font-size: 60px;
     cursor: pointer;
     display: inline-block;
     margin-top: 30px;
 }
+
 .heart {
     position: absolute;
     font-size: 40px;
@@ -51,6 +60,8 @@ h1 {
     0% { transform: translate(0,0) scale(1); opacity: 1; }
     100% { transform: translate(calc(-50px + 100px * var(--randX)), -1200px) scale(1.5); opacity: 0; }
 }
+
+/* Wydarzenia */
 .event-header {
     font-size: 52px;
     color: #ff4d4d;
@@ -61,6 +72,8 @@ h1 {
     color: #f1f1f1;
     line-height: 1.6;
 }
+
+/* Sekcje przeprosin */
 .section {
     margin-top: 40px;
     line-height: 1.6;
@@ -119,7 +132,7 @@ function updateTimer() {
     else if(step===2) timer.innerText = `Jesteśmy razem ${t.days} dni`;
 }
 
-// Funkcja do serduszek
+// Serduszka
 function spawnHeart(x=null,y=null){
     const h = document.createElement("div");
     h.className = "heart";
@@ -132,13 +145,9 @@ function spawnHeart(x=null,y=null){
 }
 setInterval(()=>spawnHeart(), 500);
 
-function spawnHearts(num=15){
-    for(let i=0;i<num;i++){
-        spawnHeart();
-    }
-}
+function spawnHearts(num=15){for(let i=0;i<num;i++){spawnHeart();}}
 
-// NEXT STEP
+// NEXT STEP Licznik
 function nextStep(){
     step++;
     if(step>2){
@@ -159,19 +168,16 @@ function nextStep(){
 // Wydarzenia
 const events = [
     {header: "Pierwsza wiadomość 17.07.2024", body: 'o treści "."'},
-    {header: "Wejście w związek 29.11.2024", body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim ... A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`},
+    {header: "Wejście w związek 29.11.2024", body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim, gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`},
     {header: "Pierwsze spotkanie 21.06.2025", body: ""}
 ];
-
 let eventIndex = 0;
 const eventDisplay = document.getElementById("event-display");
-
 function showEvent(i){
     eventDisplay.innerHTML = `<div class="event-header">${events[i].header}</div>
                               <div class="event-body">${events[i].body}</div>`;
     spawnHearts();
 }
-
 function nextEvent(){
     eventIndex++;
     if(eventIndex < events.length){
@@ -199,6 +205,7 @@ function nextSection(){
     if(sectionStep===6) document.getElementById("section-arrow").style.display="none";
 }
 
+// Start licznika
 updateTimer();
 </script>
 
