@@ -25,10 +25,9 @@ h1 {
     color: #ff4d4d;
     margin-bottom: 40px;
 }
-.timer, .event {
+.timer {
     font-size: 42px;
     margin-bottom: 30px;
-    line-height: 1.4;
 }
 .arrow {
     font-size: 48px;
@@ -45,6 +44,16 @@ h1 {
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
+}
+.event-header {
+    font-size: 48px;
+    color: #ff4d4d;
+    margin-bottom: 20px;
+}
+.event-body {
+    font-size: 28px;
+    color: #f1f1f1;
+    line-height: 1.6;
 }
 .section {
     margin-top: 40px;
@@ -66,11 +75,11 @@ h1 {
     <div class="arrow" onclick="nextStep()">➡️</div>
 </div>
 
-<!-- Wydarzenia -->
+<!-- Wydarzenia chronologiczne -->
 <div class="center-container" id="event-container" style="display:none;">
-    <div class="event section" id="event1">Pierwsza wiadomość<br>17.07.2024<br>o treści "."</div>
-    <div class="event section" id="event2">Wejście w związek<br>29.11.2024<br>A więc Aleksandro...kocham Cię.</div>
-    <div class="event section" id="event3">Pierwsze spotkanie<br>21.06.2025</div>
+    <div id="event-display">
+        <!-- Tutaj dynamicznie będą ładowane wiadomości -->
+    </div>
     <div class="arrow" id="event-arrow" onclick="nextEvent()">➡️</div>
 </div>
 
@@ -86,9 +95,9 @@ h1 {
 </div>
 
 <script>
+// Licznik
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
-
 function calculateTotal() {
     const now = new Date();
     const diffDays = Math.floor((now - startDate)/(1000*60*60*24));
@@ -96,7 +105,6 @@ function calculateTotal() {
     const diffYears = +(diffMonths / 12).toFixed(2);
     return {years: diffYears, months: diffMonths, days: diffDays};
 }
-
 function updateTimer() {
     const t = calculateTotal();
     const timer = document.getElementById("timer");
@@ -104,7 +112,6 @@ function updateTimer() {
     else if(step===1) timer.innerText = `Jesteśmy razem ${t.months} miesięcy`;
     else if(step===2) timer.innerText = `Jesteśmy razem ${t.days} dni`;
 }
-
 function spawnHearts() {
     for(let i=0;i<20;i++){
         const h=document.createElement("div");
@@ -116,25 +123,48 @@ function spawnHearts() {
         setTimeout(()=>h.remove(),2500);
     }
 }
-
 function nextStep(){
     step++;
     if(step>2){
         document.getElementById("counter-container").style.display="none";
         document.getElementById("event-container").style.display="block";
-        showEvent(1);
+        showEvent(0);
     }else{
         updateTimer();
         spawnHearts();
     }
 }
 
-let eventStep=1;
-function showEvent(n){document.getElementById("event"+n).classList.add("show");}
+// Wydarzenia w tablicy
+const events = [
+    {
+        header: "Pierwsza wiadomość 17.07.2024",
+        body: 'o treści "."'
+    },
+    {
+        header: "Wejście w związek 29.11.2024",
+        body: `A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.`
+    },
+    {
+        header: "Pierwsze spotkanie 21.06.2025",
+        body: ""
+    }
+];
+
+let eventIndex = 0;
+const eventDisplay = document.getElementById("event-display");
+
+function showEvent(i){
+    eventDisplay.innerHTML = `<div class="event-header">${events[i].header}</div>
+                              <div class="event-body">${events[i].body}</div>`;
+    spawnHearts();
+}
+
 function nextEvent(){
-    if(eventStep<3){eventStep++; showEvent(eventStep); spawnHearts();}
-    else{
-        // pokazujemy sekcje przeprosin od razu
+    eventIndex++;
+    if(eventIndex < events.length){
+        showEvent(eventIndex);
+    } else {
         document.getElementById("event-container").style.display="none";
         const sc=document.getElementById("section-container");
         sc.style.display="block";
@@ -144,6 +174,7 @@ function nextEvent(){
     }
 }
 
+// Sekcje przeprosin
 let sectionStep=1;
 function showSection(n){document.getElementById("section"+n).classList.add("show");}
 function nextSection(){
@@ -152,6 +183,7 @@ function nextSection(){
     if(sectionStep===6) document.getElementById("section-arrow").style.display="none";
 }
 
+// Start
 updateTimer();
 </script>
 
