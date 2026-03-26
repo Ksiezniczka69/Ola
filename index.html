@@ -8,9 +8,9 @@ body {
     margin: 0;
     padding: 0;
     background: #0f0f0f;
-    color: #f1f1f1;
     font-family: Arial, sans-serif;
     overflow: hidden;
+    color: #f1f1f1;
 }
 .center-container {
     position: absolute;
@@ -25,7 +25,7 @@ h1 {
     color: #ff4d4d;
     margin-bottom: 40px;
 }
-.timer, .event {
+.timer, .event-text {
     font-size: 42px;
     margin-bottom: 30px;
     line-height: 1.4;
@@ -34,16 +34,15 @@ h1 {
     color: #ff4d4d;
     font-size: 48px;
 }
-.event-text {
-    color: #f1f1f1;
-    font-size: 36px;
-    margin-top: 10px;
-}
 .arrow {
     font-size: 48px;
     cursor: pointer;
     display: inline-block;
-    margin-top: 20px;
+    margin-top: 30px;
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 .heart {
     position: absolute;
@@ -56,11 +55,10 @@ h1 {
     100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
 }
 .section {
-    margin-top: 40px;
-    line-height: 1.6;
     opacity: 0;
-    transition: opacity 1s;
+    transition: opacity 0.8s;
     font-size: 36px;
+    line-height: 1.5;
 }
 .section.show {
     opacity: 1;
@@ -84,26 +82,26 @@ h1 {
 </head>
 <body>
 
-<!-- Licznik na środku -->
+<!-- Licznik -->
 <div class="center-container" id="counter-container">
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
     <div class="arrow" onclick="nextStep()">➡️</div>
 </div>
 
-<!-- Wydarzenia chronologiczne -->
+<!-- Wydarzenia -->
 <div class="center-container" id="event-container" style="display:none;">
-    <div class="event section" id="event1">
+    <div class="section" id="event1">
         <div class="event-title">Pierwsza wiadomość 17.07.2024</div>
         <div class="event-text">o treści "."</div>
     </div>
-    <div class="event section" id="event2">
+    <div class="section" id="event2">
         <div class="event-title">Wejście w związek 29.11.2024</div>
         <div class="event-text">
             A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim... Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania... A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
         </div>
     </div>
-    <div class="event section" id="event3">
+    <div class="section" id="event3">
         <div class="event-title">Pierwsze spotkanie 21.06.2025</div>
     </div>
     <div class="arrow" onclick="nextEvent()">➡️</div>
@@ -111,9 +109,7 @@ h1 {
 
 <!-- Sekcje przeprosin -->
 <div class="center-container" id="section-container" style="display:none;">
-    <div class="section" id="section1">
-        Wiem, że Cię skrzywdziłem.
-    </div>
+    <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
     <div class="section" id="section2">
         Okłamywałem Cię.<br>
         Obiecywałem rzeczy, których nie zrobiłem.<br>
@@ -144,14 +140,14 @@ h1 {
 <!-- Slideshow -->
 <div id="slideshow"></div>
 
-<!-- Muzyka -->
-<audio id="audio" src="muzyka.mp3.mp3" autoplay loop></audio>
+<!-- Audio -->
+<audio id="audio" src="muzyka.mp3.mp3" loop></audio>
 
 <script>
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
 
-// Liczymy lata, miesiące i dni
+// Liczymy lata/miesiące/dni
 function calculateTotal() {
     const now = new Date();
     const diffMs = now - startDate;
@@ -164,7 +160,6 @@ function calculateTotal() {
 function updateTimer() {
     const total = calculateTotal();
     const timer = document.getElementById("timer");
-
     if (step === 0) timer.innerText = `Jesteśmy razem ${total.years} lat`;
     else if (step === 1) timer.innerText = `Jesteśmy razem ${total.months} miesięcy`;
     else if (step === 2) timer.innerText = `Jesteśmy razem ${total.days} dni`;
@@ -182,8 +177,20 @@ function spawnHearts() {
     }
 }
 
-// Licznik - kliknięcie strzałki
+// Autoplay audio po pierwszym kliknięciu
+const audio = document.getElementById("audio");
+let audioStarted = false;
+
+function startAudio() {
+    if(!audioStarted){
+        audio.play().catch(()=>{}); // przeglądarki mogą blokować autoplay
+        audioStarted = true;
+    }
+}
+
+// Licznik
 function nextStep() {
+    startAudio();
     step++;
     if (step > 2) {
         document.getElementById("counter-container").style.display = "none";
@@ -195,59 +202,56 @@ function nextStep() {
     }
 }
 
-// Wydarzenia chronologiczne
+// Wydarzenia
 let eventStep = 1;
 function showEvent(num) {
-    const events = document.querySelectorAll("#event-container .section");
-    events.forEach(e => e.classList.remove("show"));
+    document.querySelectorAll("#event-container .section").forEach(e => e.classList.remove("show"));
     document.getElementById("event"+num).classList.add("show");
 }
 
 function nextEvent() {
+    spawnHearts();
     if(eventStep < 3) {
         eventStep++;
         showEvent(eventStep);
-        spawnHearts();
-    }
-
-    if(eventStep === 3) {
+    } else {
         document.getElementById("event-container").style.display = "none";
-        const sectionContainer = document.getElementById("section-container");
-        sectionContainer.style.display = "block";
-        showSection(1);
+        document.getElementById("section-container").style.display = "block";
         sectionStep = 1;
-        spawnHearts();
+        showSection(sectionStep);
     }
 }
 
 // Sekcje przeprosin
 let sectionStep = 1;
 function showSection(num) {
-    const sections = document.querySelectorAll("#section-container .section");
-    sections.forEach(s => s.classList.remove("show"));
+    document.querySelectorAll("#section-container .section").forEach(s => s.classList.remove("show"));
     document.getElementById("section"+num).classList.add("show");
 }
 
 function nextSection() {
-    sectionStep++;
-    if(sectionStep <= 6) showSection(sectionStep);
-    if(sectionStep === 6) {
+    spawnHearts();
+    if(sectionStep < 6){
+        sectionStep++;
+        showSection(sectionStep);
+    } else {
         document.querySelector("#section-container .arrow").style.display = "none";
         startSlideshow();
     }
 }
 
 // Slideshow
-const totalImages = 14;
+const totalImages = 39;
 let currentImage = 1;
-function startSlideshow() {
+function startSlideshow(){
     const slideshow = document.getElementById("slideshow");
     slideshow.style.display = "block";
-    setInterval(() => {
+    slideshow.style.zIndex = "-1";
+    setInterval(()=>{
         slideshow.style.backgroundImage = `url('image${currentImage}.jpg')`;
         currentImage++;
-        if(currentImage > totalImages) currentImage = 1;
-    }, 5000);
+        if(currentImage>totalImages) currentImage=1;
+    },5000);
 }
 
 // Start
