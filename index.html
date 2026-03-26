@@ -122,7 +122,7 @@ h1 {
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
 
-// Liczymy lata, miesiące i dni w sumie
+// Liczymy lata, miesiące i dni
 function calculateTotal() {
     const now = new Date();
     const diffMs = now - startDate;
@@ -166,25 +166,29 @@ function nextStep() {
     }
 }
 
-// Obsługa wydarzeń (daty, wiadomości)
+// Wydarzenia chronologiczne
 let eventStep = 1;
 function showEvent(num) {
     document.getElementById("event"+num).classList.add("show");
 }
 
 function nextEvent() {
-    if(eventStep < 3) { // max 3 wydarzenia
+    if(eventStep < 3) {
         eventStep++;
         spawnHearts();
         showEvent(eventStep);
-        if(eventStep === 3) {
-            document.querySelector("#event-container .arrow").style.display = "none";
-            setTimeout(() => {
-                document.getElementById("event-container").style.display = "none";
-                document.getElementById("section-container").style.display = "block";
-                showSection(1);
-            }, 300);
-        }
+    }
+
+    if(eventStep === 3) {
+        // Po ostatnim wydarzeniu -> pokazujemy sekcje przeprosin od razu
+        document.getElementById("event-container").style.display = "none";
+        const sectionContainer = document.getElementById("section-container");
+        sectionContainer.style.display = "block";
+        showSection(1);
+
+        // Strzałka przejścia do sekcji widoczna
+        const arrow = sectionContainer.querySelector(".arrow");
+        if(arrow) arrow.style.display = "inline-block";
     }
 }
 
