@@ -18,7 +18,7 @@ body {
     transform: translate(-50%, -50%);
     text-align: center;
     max-width: 800px;
-    z-index: 1;
+    z-index: 2;
 }
 .text-title {
     color: #ff4d4d;
@@ -29,6 +29,7 @@ body {
     color: #f1f1f1;
     font-size: 36px;
     line-height: 1.5;
+    white-space: pre-line;
 }
 .arrow {
     font-size: 48px;
@@ -37,20 +38,18 @@ body {
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 2;
+    z-index: 3;
 }
 .heart {
     position: absolute;
     font-size: 30px;
     animation: floatUp 2s ease-out forwards;
-    pointer-events: none;
 }
 @keyframes floatUp {
-    0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(-250px); opacity: 0; }
 }
-.section { display: none; }
-.section.show { display: block; }
+
 #slideshow {
     position: fixed;
     top: 0;
@@ -60,129 +59,110 @@ body {
     display: none;
     background-size: cover;
     background-position: center;
-    z-index: 0;
-    animation: slowZoom 10s infinite alternate;
-}
-@keyframes slowZoom {
-    0% { transform: scale(1); }
-    100% { transform: scale(1.1); }
+    z-index: 1;
 }
 </style>
 </head>
 <body>
 
-<div class="container" id="display-container">
-    <!-- Tutaj będzie dynamicznie wyświetlany tekst -->
-</div>
-
+<div class="container" id="display"></div>
 <div class="arrow" onclick="nextStep()">➡️</div>
-
 <div id="slideshow"></div>
 
-<audio id="audio" src="muzyka.mp3.mp3" loop></audio>
+<audio id="audio" loop>
+    <source src="muzyka.mp3" type="audio/mpeg">
+</audio>
 
 <script>
 const audio = document.getElementById("audio");
 let audioStarted = false;
 
-function startAudio(){ if(!audioStarted){ audio.play().catch(()=>{}); audioStarted=true; } }
+function startAudio(){
+    if(!audioStarted){
+        audio.volume = 1;
+        audio.play().catch(e => console.log("audio error:", e));
+        audioStarted = true;
+    }
+}
 
-const startDate = new Date("2024-11-29T00:00:00");
+const startDate = new Date("2024-11-29");
+
 function calculateTotal() {
     const now = new Date();
-    const diffMs = now - startDate;
-    const diffDays = Math.floor(diffMs / (1000*60*60*24));
-    const diffMonths = +(diffDays / 30.4375).toFixed(1);
-    const diffYears = +(diffMonths / 12).toFixed(2);
-    return {years: diffYears, months: diffMonths, days: diffDays};
+    const diff = now - startDate;
+    const days = Math.floor(diff / (1000*60*60*24));
+    const months = (days / 30.4375).toFixed(1);
+    const years = (months / 12).toFixed(2);
+    return {days, months, years};
 }
 
-// wszystkie sekcje w kolejności
 const steps = [
-    // Licznik
-    {title: "", body: () => {
-        const t = calculateTotal();
-        return `Jesteśmy razem ${t.years} lat`;
-    }},
-    {title: "", body: () => {
-        const t = calculateTotal();
-        return `Jesteśmy razem ${t.months} miesięcy`;
-    }},
-    {title: "", body: () => {
-        const t = calculateTotal();
-        return `Jesteśmy razem ${t.days} dni`;
-    }},
-    // Wydarzenia
-    {title:"Pierwsza wiadomość 17.07.2024", body: "o treści '.'"},
-    {title:"Wejście w związek 29.11.2024", body:"A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim...\nZ biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku...\nA po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham."},
+    {body: () => `Jesteśmy razem ${calculateTotal().years} lat`},
+    {body: () => `Jesteśmy razem ${calculateTotal().months} miesięcy`},
+    {body: () => `Jesteśmy razem ${calculateTotal().days} dni`},
+
+    {title:"Pierwsza wiadomość 17.07.2024", body:"o treści '.'"},
+    {title:"Wejście w związek 29.11.2024", body:"A więc Aleksandro...\n(reszta tekstu)"},
     {title:"Pierwsze spotkanie 21.06.2025", body:""},
-    // Sekcje przeprosin
-    {title:"", body:"Wiem, że Cię skrzywdziłem."},
-    {title:"", body:"Okłamywałem Cię.\nObiecywałem rzeczy, których nie zrobiłem.\nMiałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.\nByłem zazdrosny i dokładałem Ci problemów."},
-    {title:"", body:"A mimo to byłaś przy mnie.\nWspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.\nI wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć."},
-    {title:"Jesteś dla mnie naprawdę ważna.", body:"Najważniejszą i najwspanialszą osobą w moim życiu."},
-    {title:"", body:"Nie chcę już rzucać pustych obietnic.\nChcę się zmienić i pokazać to działaniem."},
-    {title:"", body:"Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.\nPo prostu chciałem, żebyś to wiedziała.\nI żebyś jeszcze mnie nie skreśliła."}
+
+    {body:"Wiem, że Cię skrzywdziłem."},
+    {body:"Okłamywałem Cię.\nObiecywałem rzeczy, których nie zrobiłem."},
+    {body:"A mimo to byłaś przy mnie."},
+    {title:"Jesteś dla mnie naprawdę ważna.", body:"Najważniejszą osobą w moim życiu."},
+    {body:"Chcę się zmienić działaniem."},
+    {body:"Nie skreślaj mnie proszę."}
 ];
 
-let currentStep = 0;
-const display = document.getElementById("display-container");
+let i = 0;
+const display = document.getElementById("display");
 
-function spawnHearts() {
-    for(let i=0;i<20;i++){
-        const heart = document.createElement("div");
-        heart.className="heart";
-        heart.innerText="❤️";
-        heart.style.left=Math.random()*window.innerWidth+"px";
-        heart.style.top=Math.random()*window.innerHeight+"px";
-        document.body.appendChild(heart);
-        setTimeout(()=>heart.remove(),2500);
-    }
-}
-
-function showStep() {
+function showStep(){
     display.innerHTML = "";
-    const stepData = steps[currentStep];
-    if(stepData.title) {
+
+    if(steps[i].title){
         const t = document.createElement("div");
-        t.className="text-title";
-        t.innerText = stepData.title;
+        t.className = "text-title";
+        t.innerText = steps[i].title;
         display.appendChild(t);
     }
+
     const b = document.createElement("div");
-    b.className="text-body";
-    b.innerText = typeof stepData.body === "function" ? stepData.body() : stepData.body;
+    b.className = "text-body";
+    b.innerText = typeof steps[i].body === "function"
+        ? steps[i].body()
+        : steps[i].body;
+
     display.appendChild(b);
-    spawnHearts();
 }
 
-function nextStep() {
+function nextStep(){
     startAudio();
-    currentStep++;
-    if(currentStep < steps.length){
+
+    i++;
+    if(i < steps.length){
         showStep();
     } else {
-        // Start slideshow po wszystkich krokach
-        display.style.display="none";
         startSlideshow();
-        document.querySelector(".arrow").style.display="none";
+        document.querySelector(".arrow").style.display = "none";
+        display.style.display = "none";
     }
 }
 
-// Slideshow
-const totalImages=39;
-let currentImage=1;
 function startSlideshow(){
-    const slideshow=document.getElementById("slideshow");
-    slideshow.style.display="block";
-    setInterval(()=>{
-        slideshow.style.backgroundImage=`url('image${currentImage}.jpg')`;
-        currentImage++;
-        if(currentImage>totalImages) currentImage=1;
-    },5000);
+    const slide = document.getElementById("slideshow");
+    slide.style.display = "block";
+
+    let img = 1;
+
+    slide.style.backgroundImage = `url('image1.png')`;
+
+    setInterval(() => {
+        img++;
+        if(img > 39) img = 1;
+        slide.style.backgroundImage = `url('image${img}.png')`;
+    }, 5000);
 }
 
-// start pierwszego kroku
 showStep();
 </script>
 
