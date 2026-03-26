@@ -44,6 +44,8 @@ body {
     position: absolute;
     font-size: 30px;
     animation: floatUp 2s ease-out forwards;
+    pointer-events: none;
+    z-index: 9999;
 }
 @keyframes floatUp {
     0% { transform: translateY(0); opacity: 1; }
@@ -70,7 +72,7 @@ body {
 <div id="slideshow"></div>
 
 <audio id="audio" loop>
-    <source src="muzyka.mp3" type="audio/mpeg">
+    <source src="muzyka.mp3.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -82,6 +84,19 @@ function startAudio(){
         audio.volume = 1;
         audio.play().catch(e => console.log("audio error:", e));
         audioStarted = true;
+    }
+}
+
+// ❤️ SERDUSZKA
+function spawnHearts() {
+    for(let i=0;i<15;i++){
+        const heart = document.createElement("div");
+        heart.className="heart";
+        heart.innerText="❤️";
+        heart.style.left=Math.random()*100+"%";
+        heart.style.top="100%";
+        document.body.appendChild(heart);
+        setTimeout(()=>heart.remove(),2000);
     }
 }
 
@@ -137,6 +152,7 @@ function showStep(){
 
 function nextStep(){
     startAudio();
+    spawnHearts();
 
     i++;
     if(i < steps.length){
