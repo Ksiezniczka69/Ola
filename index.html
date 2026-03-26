@@ -173,21 +173,18 @@ function showEvent(num) {
 }
 
 function nextEvent() {
-    eventStep++;
-    if(eventStep <= 3) {
+    if(eventStep < 3) { // max 3 wydarzenia
+        eventStep++;
         spawnHearts();
         showEvent(eventStep);
-    }
-
-    if(eventStep === 3) {
-        // ukryj strzałkę wydarzeń
-        document.querySelector("#event-container .arrow").style.display = "none";
-        // od razu pokaż sekcje przeprosin po krótkim opóźnieniu
-        setTimeout(() => {
-            document.getElementById("event-container").style.display = "none";
-            document.getElementById("section-container").style.display = "block";
-            showSection(1);
-        }, 300);
+        if(eventStep === 3) {
+            document.querySelector("#event-container .arrow").style.display = "none";
+            setTimeout(() => {
+                document.getElementById("event-container").style.display = "none";
+                document.getElementById("section-container").style.display = "block";
+                showSection(1);
+            }, 300);
+        }
     }
 }
 
