@@ -11,53 +11,50 @@ body {
     color: #f1f1f1;
     font-family: Arial, sans-serif;
     overflow: hidden;
-    text-align: center;
 }
-
 .center-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    max-width: 900px;
+    text-align: center;
+    max-width: 800px;
 }
-
 h1 {
     font-size: 60px;
     color: #ff4d4d;
     margin-bottom: 40px;
 }
-
 .timer, .event {
     font-size: 42px;
-    line-height: 1.5;
     margin-bottom: 30px;
+    line-height: 1.4;
 }
-
-.timer span {
+.event-title {
     color: #ff4d4d;
-    font-weight: bold;
+    font-size: 48px;
 }
-
+.event-text {
+    color: #f1f1f1;
+    font-size: 36px;
+    margin-top: 10px;
+}
 .arrow {
     font-size: 48px;
     cursor: pointer;
     display: inline-block;
     margin-top: 20px;
 }
-
 .heart {
     position: absolute;
     font-size: 30px;
     animation: floatUp 2s ease-out forwards;
     pointer-events: none;
 }
-
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
 }
-
 .section {
     margin-top: 40px;
     line-height: 1.6;
@@ -65,98 +62,96 @@ h1 {
     transition: opacity 1s;
     font-size: 36px;
 }
-
 .section.show {
     opacity: 1;
 }
-
-.event-red { color: #ff4d4d; font-size: 40px; font-weight: bold; }
-.event-white { color: #ffffff; font-size: 32px; margin-top: 10px; }
-
 #slideshow {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    object-fit: cover;
-    z-index: -1;
-    animation: slowZoom 10s linear infinite;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    background-size: cover;
+    background-position: center;
+    animation: slowZoom 10s infinite alternate;
 }
-
 @keyframes slowZoom {
     0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    100% { transform: scale(1.1); }
 }
 </style>
 </head>
 <body>
 
-<!-- Muzyka -->
-<audio id="background-music" src="muzyka.mp3.mp3" loop></audio>
-
-<!-- Licznik -->
+<!-- Licznik na środku -->
 <div class="center-container" id="counter-container">
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
-    <div class="arrow" onclick="playMusic(); nextStep()">➡️</div>
+    <div class="arrow" onclick="nextStep()">➡️</div>
 </div>
 
 <!-- Wydarzenia chronologiczne -->
 <div class="center-container" id="event-container" style="display:none;">
     <div class="event section" id="event1">
-        <div class="event-red">Pierwsza wiadomość<br>17.07.2024</div>
-        <div class="event-white">o treści "."</div>
+        <div class="event-title">Pierwsza wiadomość 17.07.2024</div>
+        <div class="event-text">o treści "."</div>
     </div>
     <div class="event section" id="event2">
-        <div class="event-red">Wejście w związek<br>29.11.2024</div>
-        <div class="event-white">
-A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim, gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie. Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy. A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
+        <div class="event-title">Wejście w związek 29.11.2024</div>
+        <div class="event-text">
+            A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim... Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania... A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
         </div>
     </div>
     <div class="event section" id="event3">
-        <div class="event-red">Pierwsze spotkanie<br>21.06.2025</div>
+        <div class="event-title">Pierwsze spotkanie 21.06.2025</div>
     </div>
     <div class="arrow" onclick="nextEvent()">➡️</div>
 </div>
 
 <!-- Sekcje przeprosin -->
 <div class="center-container" id="section-container" style="display:none;">
-    <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
+    <div class="section" id="section1">
+        Wiem, że Cię skrzywdziłem.
+    </div>
     <div class="section" id="section2">
-Okłamywałem Cię.<br>
-Obiecywałem rzeczy, których nie zrobiłem.<br>
-Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
-Byłem zazdrosny i dokładałem Ci problemów.
+        Okłamywałem Cię.<br>
+        Obiecywałem rzeczy, których nie zrobiłem.<br>
+        Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
+        Byłem zazdrosny i dokładałem Ci problemów.
     </div>
     <div class="section" id="section3">
-A mimo to byłaś przy mnie.<br>
-Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
-I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
+        A mimo to byłaś przy mnie.<br>
+        Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
+        I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
     </div>
     <div class="section" id="section4">
-Jesteś dla mnie naprawdę ważna.<br>
-Najważniejszą i najwspanialszą osobą w moim życiu.
+        Jesteś dla mnie naprawdę ważna.<br>
+        Najważniejszą i najwspanialszą osobą w moim życiu.
     </div>
     <div class="section" id="section5">
-Nie chcę już rzucać pustych obietnic.<br>
-Chcę się zmienić i pokazać to działaniem.
+        Nie chcę już rzucać pustych obietnic.<br>
+        Chcę się zmienić i pokazać to działaniem.
     </div>
     <div class="section" id="section6">
-Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>
-Po prostu chciałem, żebyś to wiedziała.<br>
-I żebyś jeszcze mnie nie skreśliła.
+        Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>
+        Po prostu chciałem, żebyś to wiedziała.<br>
+        I żebyś jeszcze mnie nie skreśliła.
     </div>
     <div class="arrow" onclick="nextSection()">➡️</div>
 </div>
 
 <!-- Slideshow -->
-<img id="slideshow" src="img/1.jpg">
+<div id="slideshow"></div>
+
+<!-- Muzyka -->
+<audio id="audio" src="muzyka.mp3.mp3" autoplay loop></audio>
 
 <script>
-// --------------------- LICZNIK ---------------------
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
 
+// Liczymy lata, miesiące i dni
 function calculateTotal() {
     const now = new Date();
     const diffMs = now - startDate;
@@ -169,9 +164,10 @@ function calculateTotal() {
 function updateTimer() {
     const total = calculateTotal();
     const timer = document.getElementById("timer");
-    if (step === 0) timer.innerHTML = `Jesteśmy razem <span>${total.years}</span> lat`;
-    else if (step === 1) timer.innerHTML = `Jesteśmy razem <span>${total.months}</span> miesięcy`;
-    else if (step === 2) timer.innerHTML = `Jesteśmy razem <span>${total.days}</span> dni`;
+
+    if (step === 0) timer.innerText = `Jesteśmy razem ${total.years} lat`;
+    else if (step === 1) timer.innerText = `Jesteśmy razem ${total.months} miesięcy`;
+    else if (step === 2) timer.innerText = `Jesteśmy razem ${total.days} dni`;
 }
 
 function spawnHearts() {
@@ -186,6 +182,7 @@ function spawnHearts() {
     }
 }
 
+// Licznik - kliknięcie strzałki
 function nextStep() {
     step++;
     if (step > 2) {
@@ -198,57 +195,62 @@ function nextStep() {
     }
 }
 
-// --------------------- WYDARZENIA ---------------------
+// Wydarzenia chronologiczne
 let eventStep = 1;
 function showEvent(num) {
-    document.querySelectorAll("#event-container .section").forEach(e => e.style.display="none");
-    document.getElementById("event"+num).style.display="block";
+    const events = document.querySelectorAll("#event-container .section");
+    events.forEach(e => e.classList.remove("show"));
+    document.getElementById("event"+num).classList.add("show");
 }
 
 function nextEvent() {
-    eventStep++;
-    if(eventStep <= 3) {
+    if(eventStep < 3) {
+        eventStep++;
         showEvent(eventStep);
         spawnHearts();
     }
-    if(eventStep > 3) {
-        document.getElementById("event-container").style.display="none";
+
+    if(eventStep === 3) {
+        document.getElementById("event-container").style.display = "none";
         const sectionContainer = document.getElementById("section-container");
         sectionContainer.style.display = "block";
-        document.getElementById("section1").classList.add("show");
-        sectionContainer.querySelector(".arrow").style.display="inline-block";
+        showSection(1);
+        sectionStep = 1;
         spawnHearts();
     }
 }
 
-// --------------------- SEKCJE PRZEPROSIN ---------------------
+// Sekcje przeprosin
 let sectionStep = 1;
 function showSection(num) {
+    const sections = document.querySelectorAll("#section-container .section");
+    sections.forEach(s => s.classList.remove("show"));
     document.getElementById("section"+num).classList.add("show");
 }
 
 function nextSection() {
     sectionStep++;
     if(sectionStep <= 6) showSection(sectionStep);
-    if(sectionStep === 6) document.querySelector("#section-container .arrow").style.display = "none";
+    if(sectionStep === 6) {
+        document.querySelector("#section-container .arrow").style.display = "none";
+        startSlideshow();
+    }
 }
 
-// --------------------- SLIDESHOW ---------------------
-const images = ["img/1.jpg","img/2.jpg","img/3.jpg"];
-let imgIndex = 0;
-setInterval(() => {
-    imgIndex = (imgIndex + 1) % images.length;
-    const slide = document.getElementById("slideshow");
-    slide.src = images[imgIndex];
-}, 5000);
-
-// --------------------- MUZYKA ---------------------
-function playMusic() {
-    const music = document.getElementById('background-music');
-    music.play();
+// Slideshow
+const totalImages = 14;
+let currentImage = 1;
+function startSlideshow() {
+    const slideshow = document.getElementById("slideshow");
+    slideshow.style.display = "block";
+    setInterval(() => {
+        slideshow.style.backgroundImage = `url('image${currentImage}.jpg')`;
+        currentImage++;
+        if(currentImage > totalImages) currentImage = 1;
+    }, 5000);
 }
 
-// --------------------- START ---------------------
+// Start
 updateTimer();
 </script>
 
