@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Dla Ciebie, Ola</title>
+
 <style>
 body {
     margin: 0;
@@ -11,6 +12,8 @@ body {
     font-family: Arial, sans-serif;
     overflow: hidden;
 }
+
+/* kontener */
 .container {
     position: fixed;
     top: 50%;
@@ -20,17 +23,33 @@ body {
     max-width: 800px;
     z-index: 2;
 }
+
+/* tekst */
 .text-title {
     color: #ff4d4d;
-    font-size: 48px;
+    font-size: 50px;
     margin-bottom: 10px;
 }
+
 .text-body {
     color: #f1f1f1;
-    font-size: 36px;
+    font-size: 28px;
     line-height: 1.5;
     white-space: pre-line;
 }
+
+/* animacje */
+.section {
+    opacity: 0;
+    transform: scale(0.9);
+    transition: 0.6s;
+}
+.section.show {
+    opacity: 1;
+    transform: scale(1);
+}
+
+/* strzałka */
 .arrow {
     font-size: 48px;
     cursor: pointer;
@@ -40,6 +59,8 @@ body {
     transform: translateX(-50%);
     z-index: 3;
 }
+
+/* serca */
 .heart {
     position: absolute;
     font-size: 30px;
@@ -52,6 +73,7 @@ body {
     100% { transform: translateY(-250px); opacity: 0; }
 }
 
+/* slideshow */
 #slideshow {
     position: fixed;
     top: 0;
@@ -65,6 +87,7 @@ body {
 }
 </style>
 </head>
+
 <body>
 
 <div class="container" id="display"></div>
@@ -87,7 +110,7 @@ function startAudio(){
     }
 }
 
-// ❤️ SERDUSZKA
+// ❤️ serduszka
 function spawnHearts() {
     for(let i=0;i<15;i++){
         const heart = document.createElement("div");
@@ -100,6 +123,7 @@ function spawnHearts() {
     }
 }
 
+// licznik
 const startDate = new Date("2024-11-29");
 
 function calculateTotal() {
@@ -111,13 +135,16 @@ function calculateTotal() {
     return {days, months, years};
 }
 
+// teksty
 const steps = [
     {body: () => `Jesteśmy razem ${calculateTotal().years} lat`},
     {body: () => `Jesteśmy razem ${calculateTotal().months} miesięcy`},
     {body: () => `Jesteśmy razem ${calculateTotal().days} dni`},
 
     {title:"Pierwsza wiadomość 17.07.2024", body:"o treści '.'"},
-    {title:"Wejście w związek 29.11.2024", body:"A więc Aleksandro...\n(reszta tekstu)"},
+
+    {title:"Wejście w związek 29.11.2024", body:"A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim gdyż ani jedno ani drugie nie szukało wtedy miłości tym bardziej na Fivemie.\nZ biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku co przez dłuższy czas w sobie ukrywaliśmy.\nA po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham."},
+
     {title:"Pierwsze spotkanie 21.06.2025", body:""},
 
     {body:"Wiem, że Cię skrzywdziłem."},
@@ -131,45 +158,60 @@ const steps = [
 let i = 0;
 const display = document.getElementById("display");
 
+// pokaz tekstu (NOWA wersja)
 function showStep(){
     display.innerHTML = "";
 
+    const wrapper = document.createElement("div");
+
     if(steps[i].title){
         const t = document.createElement("div");
-        t.className = "text-title";
+        t.className = "text-title section";
         t.innerText = steps[i].title;
-        display.appendChild(t);
+        wrapper.appendChild(t);
+        setTimeout(()=>t.classList.add("show"), 100);
     }
 
     const b = document.createElement("div");
-    b.className = "text-body";
+    b.className = "text-body section";
     b.innerText = typeof steps[i].body === "function"
         ? steps[i].body()
         : steps[i].body;
 
-    display.appendChild(b);
+    wrapper.appendChild(b);
+    setTimeout(()=>b.classList.add("show"), 400);
+
+    display.appendChild(wrapper);
 }
 
+// kliknięcie dalej
 function nextStep(){
     startAudio();
     spawnHearts();
 
-    i++;
-    if(i < steps.length){
-        showStep();
-    } else {
-        startSlideshow();
-        document.querySelector(".arrow").style.display = "none";
-        display.style.display = "none";
+    const current = display.firstChild;
+    if(current){
+        current.classList.remove("show");
     }
+
+    setTimeout(()=>{
+        i++;
+        if(i < steps.length){
+            showStep();
+        } else {
+            startSlideshow();
+            document.querySelector(".arrow").style.display = "none";
+            display.style.display = "none";
+        }
+    }, 400);
 }
 
+// slideshow
 function startSlideshow(){
     const slide = document.getElementById("slideshow");
     slide.style.display = "block";
 
     let img = 1;
-
     slide.style.backgroundImage = `url('image1.png')`;
 
     setInterval(() => {
