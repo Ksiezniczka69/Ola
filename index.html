@@ -10,7 +10,6 @@ body {
     background: #0f0f0f;
     font-family: Arial, sans-serif;
     overflow: hidden;
-    color: #f1f1f1;
 }
 .container {
     position: fixed;
@@ -19,11 +18,7 @@ body {
     transform: translate(-50%, -50%);
     text-align: center;
     max-width: 800px;
-}
-h1 {
-    font-size: 60px;
-    color: #ff4d4d;
-    margin-bottom: 30px;
+    z-index: 1;
 }
 .text-title {
     color: #ff4d4d;
@@ -42,6 +37,7 @@ h1 {
     bottom: 50px;
     left: 50%;
     transform: translateX(-50%);
+    z-index: 2;
 }
 .heart {
     position: absolute;
@@ -53,12 +49,8 @@ h1 {
     0% { transform: translateY(0) scale(1); opacity: 1; }
     100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
 }
-.section {
-    display: none;
-}
-.section.show {
-    display: block;
-}
+.section { display: none; }
+.section.show { display: block; }
 #slideshow {
     position: fixed;
     top: 0;
@@ -79,73 +71,23 @@ h1 {
 </head>
 <body>
 
-<!-- Licznik -->
-<div class="container" id="counter-container">
-    <h1>Ola...</h1>
-    <div class="text-body" id="timer"></div>
-    <div class="arrow" onclick="nextStep()">➡️</div>
+<div class="container" id="display-container">
+    <!-- Tutaj będzie dynamicznie wyświetlany tekst -->
 </div>
 
-<!-- Wydarzenia -->
-<div class="container" id="event-container">
-    <div class="section" id="event1">
-        <div class="text-title">Pierwsza wiadomość 17.07.2024</div>
-        <div class="text-body">o treści "."</div>
-    </div>
-    <div class="section" id="event2">
-        <div class="text-title">Wejście w związek 29.11.2024</div>
-        <div class="text-body">
-            A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim...
-            Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku...
-            A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
-        </div>
-    </div>
-    <div class="section" id="event3">
-        <div class="text-title">Pierwsze spotkanie 21.06.2025</div>
-    </div>
-    <div class="arrow" onclick="nextEvent()">➡️</div>
-</div>
+<div class="arrow" onclick="nextStep()">➡️</div>
 
-<!-- Sekcje przeprosin -->
-<div class="container" id="section-container">
-    <div class="section" id="section1">Wiem, że Cię skrzywdziłem.</div>
-    <div class="section" id="section2">
-        Okłamywałem Cię.<br>
-        Obiecywałem rzeczy, których nie zrobiłem.<br>
-        Miałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.<br>
-        Byłem zazdrosny i dokładałem Ci problemów.
-    </div>
-    <div class="section" id="section3">
-        A mimo to byłaś przy mnie.<br>
-        Wspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.<br>
-        I wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć.
-    </div>
-    <div class="section" id="section4">
-        Jesteś dla mnie naprawdę ważna.<br>
-        Najważniejszą i najwspanialszą osobą w moim życiu.
-    </div>
-    <div class="section" id="section5">
-        Nie chcę już rzucać pustych obietnic.<br>
-        Chcę się zmienić i pokazać to działaniem.
-    </div>
-    <div class="section" id="section6">
-        Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.<br>
-        Po prostu chciałem, żebyś to wiedziała.<br>
-        I żebyś jeszcze mnie nie skreśliła.
-    </div>
-    <div class="arrow" onclick="nextSection()">➡️</div>
-</div>
-
-<!-- Slideshow -->
 <div id="slideshow"></div>
 
-<!-- Audio -->
 <audio id="audio" src="muzyka.mp3.mp3" loop></audio>
 
 <script>
-const startDate = new Date("2024-11-29T00:00:00");
-let step = 0;
+const audio = document.getElementById("audio");
+let audioStarted = false;
 
+function startAudio(){ if(!audioStarted){ audio.play().catch(()=>{}); audioStarted=true; } }
+
+const startDate = new Date("2024-11-29T00:00:00");
 function calculateTotal() {
     const now = new Date();
     const diffMs = now - startDate;
@@ -155,13 +97,36 @@ function calculateTotal() {
     return {years: diffYears, months: diffMonths, days: diffDays};
 }
 
-function updateTimer() {
-    const total = calculateTotal();
-    const timer = document.getElementById("timer");
-    if(step===0) timer.innerText=`Jesteśmy razem ${total.years} lat`;
-    else if(step===1) timer.innerText=`Jesteśmy razem ${total.months} miesięcy`;
-    else if(step===2) timer.innerText=`Jesteśmy razem ${total.days} dni`;
-}
+// wszystkie sekcje w kolejności
+const steps = [
+    // Licznik
+    {title: "", body: () => {
+        const t = calculateTotal();
+        return `Jesteśmy razem ${t.years} lat`;
+    }},
+    {title: "", body: () => {
+        const t = calculateTotal();
+        return `Jesteśmy razem ${t.months} miesięcy`;
+    }},
+    {title: "", body: () => {
+        const t = calculateTotal();
+        return `Jesteśmy razem ${t.days} dni`;
+    }},
+    // Wydarzenia
+    {title:"Pierwsza wiadomość 17.07.2024", body: "o treści '.'"},
+    {title:"Wejście w związek 29.11.2024", body:"A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim...\nZ biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania i możliwego związku...\nA po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham."},
+    {title:"Pierwsze spotkanie 21.06.2025", body:""},
+    // Sekcje przeprosin
+    {title:"", body:"Wiem, że Cię skrzywdziłem."},
+    {title:"", body:"Okłamywałem Cię.\nObiecywałem rzeczy, których nie zrobiłem.\nMiałem wziąć się za pracę, prawko i siebie — ale tego nie zrobiłem.\nByłem zazdrosny i dokładałem Ci problemów."},
+    {title:"", body:"A mimo to byłaś przy mnie.\nWspierałaś mnie i dawałaś mi więcej, niż na to zasługiwałem.\nI wiem, że to przeze mnie zaczęłaś się przy mnie źle czuć."},
+    {title:"Jesteś dla mnie naprawdę ważna.", body:"Najważniejszą i najwspanialszą osobą w moim życiu."},
+    {title:"", body:"Nie chcę już rzucać pustych obietnic.\nChcę się zmienić i pokazać to działaniem."},
+    {title:"", body:"Nie oczekuję, że od razu będzie zajebiście i mi wybaczysz.\nPo prostu chciałem, żebyś to wiedziała.\nI żebyś jeszcze mnie nie skreśliła."}
+];
+
+let currentStep = 0;
+const display = document.getElementById("display-container");
 
 function spawnHearts() {
     for(let i=0;i<20;i++){
@@ -175,49 +140,33 @@ function spawnHearts() {
     }
 }
 
-const audio=document.getElementById("audio");
-let audioStarted=false;
-function startAudio(){if(!audioStarted){audio.play().catch(()=>{});audioStarted=true;}}
-
-// Licznik
-function nextStep(){
-    startAudio();
-    step++;
-    if(step>2){
-        document.getElementById("counter-container").style.display="none";
-        document.getElementById("event-container").style.display="block";
-        eventStep=1;
-        showEvent(eventStep);
-    } else { updateTimer(); spawnHearts(); }
-}
-
-// Wydarzenia
-let eventStep=1;
-function showEvent(num){
-    document.querySelectorAll("#event-container .section").forEach(e=>e.classList.remove("show"));
-    document.getElementById("event"+num).classList.add("show");
-}
-function nextEvent(){
-    spawnHearts();
-    if(eventStep<3){ eventStep++; showEvent(eventStep); }
-    else{
-        document.getElementById("event-container").style.display="none";
-        document.getElementById("section-container").style.display="block";
-        sectionStep=1;
-        showSection(sectionStep);
+function showStep() {
+    display.innerHTML = "";
+    const stepData = steps[currentStep];
+    if(stepData.title) {
+        const t = document.createElement("div");
+        t.className="text-title";
+        t.innerText = stepData.title;
+        display.appendChild(t);
     }
+    const b = document.createElement("div");
+    b.className="text-body";
+    b.innerText = typeof stepData.body === "function" ? stepData.body() : stepData.body;
+    display.appendChild(b);
+    spawnHearts();
 }
 
-// Sekcje przeprosin
-let sectionStep=1;
-function showSection(num){
-    document.querySelectorAll("#section-container .section").forEach(s=>s.classList.remove("show"));
-    document.getElementById("section"+num).classList.add("show");
-}
-function nextSection(){
-    spawnHearts();
-    if(sectionStep<6){ sectionStep++; showSection(sectionStep); }
-    else{ document.querySelector("#section-container .arrow").style.display="none"; startSlideshow(); }
+function nextStep() {
+    startAudio();
+    currentStep++;
+    if(currentStep < steps.length){
+        showStep();
+    } else {
+        // Start slideshow po wszystkich krokach
+        display.style.display="none";
+        startSlideshow();
+        document.querySelector(".arrow").style.display="none";
+    }
 }
 
 // Slideshow
@@ -226,7 +175,6 @@ let currentImage=1;
 function startSlideshow(){
     const slideshow=document.getElementById("slideshow");
     slideshow.style.display="block";
-    slideshow.style.zIndex="0";
     setInterval(()=>{
         slideshow.style.backgroundImage=`url('image${currentImage}.jpg')`;
         currentImage++;
@@ -234,7 +182,8 @@ function startSlideshow(){
     },5000);
 }
 
-updateTimer();
+// start pierwszego kroku
+showStep();
 </script>
 
 </body>
