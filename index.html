@@ -18,15 +18,17 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
+    max-width: 800px;
 }
 h1 {
-    font-size: 48px;
+    font-size: 60px;
     color: #ff4d4d;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
 }
-.timer {
+.timer, .event {
     font-size: 42px;
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    line-height: 1.4;
 }
 .arrow {
     font-size: 48px;
@@ -36,13 +38,13 @@ h1 {
 }
 .heart {
     position: absolute;
-    font-size: 24px;
+    font-size: 30px;
     animation: floatUp 2s ease-out forwards;
     pointer-events: none;
 }
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
-    100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
+    100% { transform: translateY(-250px) scale(1.5); opacity: 0; }
 }
 .section {
     margin-top: 40px;
@@ -61,6 +63,26 @@ h1 {
     <h1>Ola...</h1>
     <div class="timer" id="timer"></div>
     <div class="arrow" onclick="nextStep()">➡️</div>
+</div>
+
+<div class="center-container" id="event-container" style="display:none;">
+    <div class="event section" id="event1">
+        Pierwsza wiadomość<br>
+        17.07.2024<br>
+        o treści "."
+    </div>
+    <div class="event section" id="event2">
+        Wejście w związek<br>
+        29.11.2024<br>
+        A więc Aleksandro. Jak ostatnio sprawdzaliśmy nasza znajomość zaczęła rozwijać się w lipcu kiedy byliśmy dla siebie zwykłymi nnkami chcącymi się po prostu poznać w kierunku koleżeńskim/przyjacielskim...<br>
+        Z biegiem czasu jedno i drugie zaczęło dostrzegać efekt zakochania...<br>
+        A po wczorajszej rozmowie niekoniecznie wiedziałem jakby Ci powiedzieć, że nie chce żebyś tylko w Fivemie, a również poza grą nazywać Ciebie swoją babą ponieważ po prostu Cię kocham.
+    </div>
+    <div class="event section" id="event3">
+        Pierwsze spotkanie<br>
+        21.06.2025
+    </div>
+    <div class="arrow" onclick="nextEvent()">➡️</div>
 </div>
 
 <div class="center-container" id="section-container" style="display:none;">
@@ -94,16 +116,15 @@ h1 {
 </div>
 
 <script>
-// Data początku relacji
 const startDate = new Date("2024-11-29T00:00:00");
 let step = 0;
 
-// Liczymy lata, miesiące i dni w sumie
+// Liczymy lata, miesiące, dni w sumie
 function calculateTotal() {
     const now = new Date();
     const diffMs = now - startDate;
     const diffDays = Math.floor(diffMs / (1000*60*60*24));
-    const diffMonths = +(diffDays / 30.4375).toFixed(1); // średnia liczba dni w miesiącu
+    const diffMonths = +(diffDays / 30.4375).toFixed(1);
     const diffYears = +(diffMonths / 12).toFixed(2);
     return {years: diffYears, months: diffMonths, days: diffDays};
 }
@@ -117,34 +138,54 @@ function updateTimer() {
     else if (step === 2) timer.innerText = `Jesteśmy razem ${total.days} dni`;
 }
 
-// Funkcja serduszek
 function spawnHearts() {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 20; i++) {
         const heart = document.createElement("div");
         heart.className = "heart";
         heart.innerText = "❤️";
         heart.style.left = Math.random() * window.innerWidth + "px";
         heart.style.top = Math.random() * window.innerHeight + "px";
         document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 2000);
+        setTimeout(() => heart.remove(), 2500);
     }
 }
 
-// Klik strzałki przy liczniku
+// Licznik - kliknięcie strzałki
 function nextStep() {
     step++;
     if (step > 2) {
-        // koniec licznika, pokaż sekcje
         document.getElementById("counter-container").style.display = "none";
-        document.getElementById("section-container").style.display = "block";
-        showSection(1);
+        document.getElementById("event-container").style.display = "block";
+        showEvent(1);
     } else {
         updateTimer();
         spawnHearts();
     }
 }
 
-// Obsługa sekcji przeprosin
+// Obsługa wydarzeń (daty, wiadomości)
+let eventStep = 1;
+function showEvent(num) {
+    document.getElementById("event"+num).classList.add("show");
+}
+
+function nextEvent() {
+    eventStep++;
+    if(eventStep <= 3) {
+        spawnHearts();
+        showEvent(eventStep);
+    }
+    if(eventStep === 3) document.querySelector("#event-container .arrow").style.display = "none";
+    if(eventStep === 3) {
+        setTimeout(() => {
+            document.getElementById("event-container").style.display = "none";
+            document.getElementById("section-container").style.display = "block";
+            showSection(1);
+        }, 700); // małe opóźnienie żeby serca zdążyły
+    }
+}
+
+// Sekcje przeprosin
 let sectionStep = 1;
 function showSection(num) {
     document.getElementById("section"+num).classList.add("show");
